@@ -1,4 +1,4 @@
-ETC5550: Assignment 3
+# ETC5550: Assignment 3
 
 This repository contains the work and materials for Assignment 3 of the ETC5550 unit (Applied Forecasting).
 
