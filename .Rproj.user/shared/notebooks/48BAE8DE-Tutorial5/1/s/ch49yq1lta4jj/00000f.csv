@@ -1,0 +1,4 @@
+"0",""
+"0","augment(fit) %>% "
+"0","  autoplot(.fitted) +"
+"0","  autolayer(aus_bricks, Bricks)"

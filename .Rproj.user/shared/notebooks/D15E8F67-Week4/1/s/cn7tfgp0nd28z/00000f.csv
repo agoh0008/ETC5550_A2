@@ -1,0 +1,7 @@
+"0",""
+"0","holidays <- tourism %>% "
+"0","  as_tibble() %>% "
+"0","  filter(Purpose == ""Holiday"") %>% "
+"0","  summarise(Trips = sum(Trips), .by = c(""State"", ""Quarter"")) %>% "
+"0","  as_tsibble(index = Quarter, key = State)"
+"0",""

@@ -1,0 +1,4 @@
+"0",""
+"0","aus_economy <- global_economy %>% "
+"0","  filter(Country == ""Australia"")"
+"0",""

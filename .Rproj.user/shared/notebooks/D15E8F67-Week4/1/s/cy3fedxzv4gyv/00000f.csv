@@ -1,0 +1,7 @@
+"0",""
+"0","accuracy(fit) %>% "
+"0","  summarise("
+"0","    RMSSE = sqrt(mean(RMSSE^2)), "
+"0","    MAPE = mean(MAPE), "
+"0","    .by = .model) %>% "
+"0","  arrange(RMSSE)"

@@ -1,0 +1,3 @@
+"0",""
+"0","augment(fit) %>% "
+"0","  autoplot(.fitted)"

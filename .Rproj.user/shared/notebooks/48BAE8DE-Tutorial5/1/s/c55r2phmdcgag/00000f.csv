@@ -1,0 +1,5 @@
+"0",""
+"0","augment(fit) %>% "
+"0","  autoplot(.fitted) + # plotted predicted values "
+"0","  autolayer(aus_economy, Population) # compare with what the data actually was"
+"0",""

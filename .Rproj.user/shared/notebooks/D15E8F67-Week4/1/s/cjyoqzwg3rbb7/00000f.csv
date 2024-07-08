@@ -1,0 +1,6 @@
+"0",""
+"0","fit %>% "
+"0","  filter(Country == ""USA"") %>% "
+"0","  select(drift) %>% "
+"0","  gg_tsresiduals()"
+"0",""

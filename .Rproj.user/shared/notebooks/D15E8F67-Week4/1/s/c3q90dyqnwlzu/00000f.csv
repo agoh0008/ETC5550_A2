@@ -1,0 +1,7 @@
+"0",""
+"0","fc %>% "
+"0","  accuracy(hh_budget) %>% "
+"0","  summarise(RMSE = sqrt(mean(RMSE^2)),"
+"0","            .by = .model"
+"0","            ) %>% "
+"0","  arrange(RMSE)"

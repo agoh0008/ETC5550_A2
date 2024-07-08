@@ -1,0 +1,5 @@
+"0",""
+"0","fit %>% "
+"0","  select(snaive) %>% "
+"0","  residuals() %>% "
+"0","  gg_season(.resid)"

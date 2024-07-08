@@ -1,0 +1,4 @@
+"0",""
+"0","aus_retail %>% "
+"0","  summarise(Turnover = sum(Turnover)) %>% "
+"0","  autoplot(Turnover)"

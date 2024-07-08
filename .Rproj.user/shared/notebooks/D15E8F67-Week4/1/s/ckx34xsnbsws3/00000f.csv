@@ -1,0 +1,13 @@
+"0",""
+"0","# check lecture code again "
+"0",""
+"0","test_fc %>% "
+"0","  accuracy(holidays) %>% "
+"0","  summarise("
+"0","    RMSSE = sqrt(mean(RMSSE^2)), "
+"0","    MAPE = mean(MAPE),"
+"0","    .by = .model"
+"0","  ) %>% "
+"0","  arrange(RMSSE)"
+"2","Warning: The future dataset is incomplete, incomplete out-of-sample data will be treated as missing. 
+16 observations are missing between 2018 Q1 and 2021 Q4"

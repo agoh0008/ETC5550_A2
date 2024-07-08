@@ -1,0 +1,7 @@
+"0","#| label: fig-1"
+"0","#| fig-cap: ""Population trend in Kiribati from 1960 to 2022"""
+"0",""
+"0","autoplot(pop) +"
+"0","  theme_minimal() +"
+"0","  ggtitle(""Population Growth in Kiribati (1960-2022)"")"
+"0",""

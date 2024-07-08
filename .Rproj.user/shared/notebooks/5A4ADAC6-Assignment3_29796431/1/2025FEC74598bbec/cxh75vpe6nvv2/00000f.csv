@@ -1,0 +1,5 @@
+"0",""
+"0","pop_fc <- pop_fit %>% "
+"0","  forecast(h = 5) %>% "
+"0","  accuracy(pop_test)"
+"0",""

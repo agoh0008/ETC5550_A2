@@ -1,0 +1,4 @@
+"0",""
+"0","# black line = plot of filtered data (before 2000) > training data"
+"0","# whatever left over = what we will forecast > our test dataset "
+"0",""

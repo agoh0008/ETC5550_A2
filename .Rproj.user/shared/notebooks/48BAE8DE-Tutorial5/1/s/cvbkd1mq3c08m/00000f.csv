@@ -1,0 +1,6 @@
+"0",""
+"0","fit %>% "
+"0","  forecast() %>% "
+"0","  autoplot(aus_bricks %>%  filter(Quarter > yearquarter(""2000 Q1"")), "
+"0","           alpha = 0.5)"
+"0",""

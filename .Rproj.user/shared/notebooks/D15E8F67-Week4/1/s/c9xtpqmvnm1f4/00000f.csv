@@ -1,0 +1,4 @@
+"0",""
+"0","augment(fit) %>% "
+"0","  filter(State == ""Victoria"", .model == ""Seasonal_naive"") %>% "
+"0","  features(.innov, ljung_box, lag = 8)"

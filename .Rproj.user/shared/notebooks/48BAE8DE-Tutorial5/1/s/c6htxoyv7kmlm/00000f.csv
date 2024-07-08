@@ -1,0 +1,4 @@
+"0",""
+"0","tot_retail <- aus_retail %>% "
+"0","  summarise(Turnover = sum(Turnover))"
+"0",""

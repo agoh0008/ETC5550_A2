@@ -1,0 +1,8 @@
+"0",""
+"0","# short-term: SNAIVE better"
+"0","# got both global trend and seasonality > so can use SNAIVE or RW~Drift"
+"0","# depends how far ahead you're forecasting"
+"0","# if forecasting long term: use DRIFT"
+"0",""
+"0","# need a model that can do BOTH trend and seasonality "
+"0",""

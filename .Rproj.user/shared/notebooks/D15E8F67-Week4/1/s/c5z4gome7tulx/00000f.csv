@@ -1,0 +1,4 @@
+"0",""
+"0","test_fc <- training_fit %>% "
+"0","  forecast(h = ""4 years"")"
+"0",""

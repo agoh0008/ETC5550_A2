@@ -1,0 +1,230 @@
+---
+title: "Assignment 3"
+author: "Alexandra Goh (29796431)"
+output: 
+  bookdown::html_document2:
+    number_sections: no
+date: "2024-03-30"
+---
+
+<br>
+
+```{r, echo = FALSE, message = FALSE, warning = FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library(dplyr)
+library(fable)
+library(kableExtra)
+library(knitr)
+
+```
+
+```{r, echo = FALSE, message = FALSE, warning = FALSE}
+
+library(fpp3)
+
+# Replace seed with your student ID
+
+set.seed(29796431)
+pop <- readr::read_rds("https://bit.ly/monashpopulationdata") |>
+  filter(Country == sample(Country, 1))
+
+
+```
+
+#### **Using a test set of 2018–2022, fit an ETS model chosen automatically, and three benchmark methods to the training data. Which gives the best forecasts on the test set, based on RMSE?**
+
+Figure \@ref(fig:fig-1) depicts a global increasing trend in the national population time series of Kiribati over time.
+
+To model and forecast the population data, we employed three benchmark methods: mean, naive and drift. These methods were chosen primarily due to their simplicity and effectiveness in capturing different aspects of the underlying population dynamics. For instance, the drift method extends the naive forecasting method by incorporating a linear trend component into the forecasts. This allows the model to capture the overall trend in the population data, thus making the drift method suitable for time series with a clear trend such as in this case.
+
+We did not include the seasonal naive method in our analysis as there doesn't appear to be any discernible seasonality in Figure \@ref(fig:fig-1). Seasonal naive methods are typically used for time series data with seasonal patterns, which we did not observe in the plotted Kiribati population data.
+
+Additionally, an ETS model (A,A,N) was fitted to the training data, with the parameters of error, trend and season chosen automatically. More specifically, the model includes additive errors, additive trend and no seasonality components. The additive error term implies that the variability or randomness in the observed data remains relatively constant across different levels of the time series, which seemed appropriate for the Kiribati population data as there were no indications of increasing or decreasing variability in the plotted time series. Secondly, the additive trend component allows the model to capture linear trends in the data, which aligns well with the observed global increasing trend in the population over time. Lastly, the absence of seasonality (denoted by 'N') was justified by the lack of discernible seasonal patterns in the population time series, as determined from Figure \@ref(fig:fig-1). 
+
+
+```{r fig-1, echo = FALSE, message = FALSE, warning = FALSE}
+#| label: fig-1
+#| fig-cap: "Population trend in Kiribati from 1960 to 2022"
+
+autoplot(pop) +
+  theme_minimal() +
+  ggtitle("Population Growth in Kiribati (1960-2022)")
+
+```
+
+<br> 
+
+
+After reviewing the accuracy measures and comparing the RMSE values, it is evident that the drift method outperforms the other three methods, displaying the lowest RMSE value. This suggests that, in terms of predictive accuracy measured by RMSE alone, the drift method provides the most best forecasts on the test set for the population data in Kiribati. The superior performance of the drift method could be attributed to its incorporation of a linear trend component, allowing it to capture the underlying trend in the population data more effectively. 
+
+<br>
+
+```{r, echo = FALSE, message = FALSE, warning = FALSE}
+
+pop_train <- pop %>%
+  filter(Year < 2018)
+
+pop_test <- pop %>% 
+  filter(Year >= 2018)
+
+pop_fit <- pop_train %>% 
+  model(
+    ETS = ETS(log(Population)),
+    Mean = MEAN(log(Population)),
+    Naïve = NAIVE(log(Population)),
+    Drift = RW(log(Population) ~ drift())
+  )
+
+```
+
+```{r, echo = FALSE, message = FALSE, warning = FALSE}
+
+pop_fc <- pop_fit %>% 
+  forecast(h = 5) %>% 
+  accuracy(pop)
+
+```
+
+```{r table-1, echo = FALSE, message = FALSE, warning = FALSE}
+
+kable(pop_fc, format = "html", caption = "Accuracy Measures for ETS Model and Benchmark Methods") %>%
+  kable_styling(full_width = FALSE) 
+
+```
+
+
+<br> 
+
+#### **Check the residuals from the best model using an ACF plot and a Ljung-Box test. Do the residuals appear to be white noise?**
+
+<br>
+
+We checked for residuals from the drift model using an ACF plot and a Ljung-Box test.
+
+From the ACF plot in Figure \@ref(fig:fig-2), it's evident that the residuals do not appear to be white noise and they exhibit significant autocorrelation instead. This is because more than 5% of the spikes in the ACF plot fall outside the confidence bounds (i.e. the dashed blue lines), with seven spikes lying outside these bounds and exceeding the 95% confidence intervals (meaning that they are considered statistically significant at the 5% significance level). These deviations from zero outside the blue shaded region suggest that the residuals as a group are significantly different from white noise, as in a white noise series, approximately 95% of the autocorrelation coefficients should fall within the confidence interval. 
+
+Moreover, an additional observation from the ACF plot is the presence of a downward trend in the autocorrelation coefficients corresponding to the first four lags. This trend indicates a strong negative autocorrelation at these lags, suggesting potential issues with the drift model. Strong negative autocorrelation may imply that the model is overfitting the data, failing to capture certain patterns present in the data, or systematically underestimating/overestimating the population values at specific points in time.
+
+This is further supported by the low p-value associated with the Ljung-Box test for autocorrelation in the residuals of the drift model. As the p-value (7.87e-12) is very low and less than 0.05, this indicates strong evidence against the null hypothesis, where the null hypothesis in this case is that there is no autocorrelation in the residuals (i.e. the residuals are white noise). Hence, we reject the null hypothesis and conclude that there is significant autocorrelation in the residuals of the drift model. This implies that the residuals are not white noise and contain systematic patterns or dependencies.
+
+In summary, the significant autocorrelation observed in the residuals therefore suggests potential limitations in the ability of the drift method to accurately capture all the underlying patterns/information present in Kiribati's population data, despite accounting for a linear trend. Hence, the drift method does not appear to be a good fit for the population data.
+
+<br>
+
+```{r fig-2, echo = FALSE, message = FALSE, warning = FALSE}
+#| label: fig-2
+#| fig-cap: "ACF Plot showing residuals from the drift method"
+
+aug_drift <- pop_train %>% 
+  model(
+    Drift = RW(log(Population) ~ drift())
+  ) %>% 
+  augment()
+
+aug_drift %>% 
+  ACF(.resid) %>% 
+  autoplot() +
+  labs(title = "Residuals from the drift method") +
+  theme_minimal()
+
+```
+
+
+<br>
+
+<u><strong>Ljung-Box Test Results for Residuals of the Drift Model</strong></u>
+
+```{r, echo = FALSE, message = FALSE, warning = FALSE}
+
+aug_drift %>% 
+  features(.resid, ljung_box, lags = 10)
+
+```
+
+<br>
+
+
+#### **Now use time-series cross-validation with a minimum sample size of 15 years, a step size of 1 year, and a forecast horizon of 5 years. Calculate the RMSE of the results. Does it change the conclusion you reach based on the test set?**
+
+<br>
+
+After using time-series cross validation, we find that the drift model, which previously showed the lowest RMSE on the test set, now exhibits a higher RMSE compared to the ETS model. This suggests that the drift model's performance might have been overestimated when considering only the test set, thus highlighting the importance of cross-validation in providing a more robust assessment of forecasting models.
+
+In fact, the ETS model (despite having a higher RMSE than the drift model in the initial evaluation) now has the lowest RMSE relative to all four methods through time-series cross-validation. This indicates that the ETS model consistently outperforms the drift model across all folds of the time-series cross-validation, thus inferring the ETS model may provide more accurate forecasts compared to the drift model, especially when accounting for potential variations in the data over time. Meanwhile, the mean and naïve methods, still demonstrate significantly higher RMSE values compared to both the drift and ETS models. 
+
+Therefore, the results from time-series cross-validation suggest that the ETS model may give the best forecasts compared to the drift model for predicting the population of Kiribati.
+
+<br>
+
+```{r table-2, echo = FALSE, message = FALSE, warning = FALSE}
+
+pop_stretch <- pop_train %>% 
+  stretch_tsibble(.init = 15, .step = 1) 
+
+cv_fit <- pop_stretch %>%
+  model(
+    ETS = ETS(log(Population)),
+    Mean = MEAN(log(Population)),
+    Naïve = NAIVE(log(Population)),
+    Drift = RW(log(Population) ~ drift())
+  )
+
+cv_forecast <- cv_fit %>% 
+  forecast(h = 5) %>% 
+  accuracy(pop)
+
+kable(cv_forecast, format = "html", caption = "Accuracy Measures for Forecasting Models Generated through Time-Series Cross-Validation") %>%
+  kable_styling(full_width = FALSE) 
+
+
+```
+
+
+
+<br>
+
+#### **Which of these two methods of computing accuracy is more reliable? Why?**
+
+In our initial test set evaluation, the drift method exhibited the lowest RMSE among the fitted models when evaluated, suggesting it provided the best forecasts for the test set period spanning 2018–2022. However, when applying time-series cross validation with a minimum sample size of 15 years and a forecast horizon of 5 years, the ETS model emerged with the lowest RMSE. This indicates that, on average, the ETS model performed better across multiple training and test sets compared to the benchmark methods.
+
+Between the two methods, time-series cross validation is deemed more reliable for computing accuracy due to its ability to create multiple training and test sets. By systematically partitioning the data into different subsets (where each subset is then used as both a training set and a test set), this ensures that every observation in the Kiribati population dataset is used for both training and testing at some point. Creating multiple splits of the data and evaluating the model on each split also helps to provide a more robust estimate of model performance compared to a single train-test split. This approach helps to reduce the variability in model evaluation that may arise from using a single fixed train-test split. Additionally, cross-validation allows for the assessment of how well the model generalizes to unseen data across different temporal periods, providing insights into its stability and reliability over time.
+
+This is further supported by Figure \@ref(fig:fig-3), which shows that while the residuals of the ETS model still exhibit significant autocorrelation and do not appear to be white noise, there are fewer spikes outside the 95% confidence intervals compared to the drift model in Figure \@ref(fig:fig-2). Additionally, the autocorrelation coefficients for the ETS model appear to be more random, indicating a potentially better fit to the data compared to the drift model.
+
+However, the Ljung-Box test confirmed that the autocorrelation in the residuals of the ETS model was statistically significant, as indicated by the low p-value (0.00000958). This suggests that the residuals still contain systematic patterns or dependencies, even though the ETS model outperformed the other benchmark methods in terms of RMSE during cross-validation.
+
+To conclude, while the drift model initially exhibited the lowest RMSE on the test set, the ETS model demonstrated superior performance when evaluated through time-series cross-validation. Cross-validation is thus considered more reliable due to its ability to assess model performance across multiple data subsets, reducing the risk of overfitting or biased evaluation. Despite the presence of autocorrelation in the ETS model residuals, the model still outperformed the benchmark methods in terms of RMSE, indicating its effectiveness in capturing the underlying patterns in the data.
+
+
+<br> 
+
+```{r fig-3, echo = FALSE, message = FALSE, warning = FALSE}
+#| label: fig-3
+#| fig-cap: "ACF Plot showing residuals from the ETS method"
+
+aug_ets <- pop_train %>% 
+  model(
+    ETS = ETS(log(Population))
+  ) %>% 
+  augment()
+
+aug_ets %>% 
+  ACF(.resid) %>% 
+  autoplot() +
+  labs(title = "Residuals from the ETS method") +
+  theme_minimal()
+
+```
+
+<br>
+
+<u><strong>Ljung-Box Test Results for Residuals of the ETS Model</strong></u>
+
+```{r, echo = FALSE, message = FALSE, warning = FALSE}
+
+aug_ets %>% 
+  features(.resid, ljung_box, lags = 10)
+
+```
+
+

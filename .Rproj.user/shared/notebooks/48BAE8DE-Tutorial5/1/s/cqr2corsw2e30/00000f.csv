@@ -1,0 +1,6 @@
+"0",""
+"0","fit <- tot_retail %>% "
+"0","  model(snaive = SNAIVE(Turnover),"
+"0","        drift = RW(Turnover ~drift())"
+"0","  )"
+"0",""

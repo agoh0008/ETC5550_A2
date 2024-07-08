@@ -1,0 +1,8 @@
+"0",""
+"0","fit <- train %>% "
+"0","  model("
+"0","    naive = NAIVE(Wealth),"
+"0","    drift = RW(Wealth ~ drift()),"
+"0","    mean = MEAN(Wealth)"
+"0","  )"
+"0",""

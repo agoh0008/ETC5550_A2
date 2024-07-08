@@ -1,0 +1,5 @@
+"0",""
+"0","stl_fit %>% "
+"0","  forecast(h = ""4 years"") %>% "
+"0","  autoplot(holidays)"
+"0",""
